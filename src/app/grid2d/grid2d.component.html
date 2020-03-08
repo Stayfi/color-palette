@@ -1,0 +1,18 @@
+<input type="color" value="#ffffff" [(ngModel)]="topLeftColor" />
+{{ topLeftColor }}
+<input type="color" value="#000000" [(ngModel)]="bottomRightColor" />
+{{ bottomRightColor }}
+<br />
+<br />
+<input type="button" value="draw" (click)="drawGradientBackground()" />
+<br />
+<br />
+<table border="1" cellspacing="2">
+  <tr *ngFor="let gridRow of colorsGrid; let index = i">
+    <td
+      *ngFor="let gridcol of gridRow; let index = j"
+      [style.backgroundColor]="gridcol"
+      style="width:30px; height:30px;"
+    ></td>
+  </tr>
+</table>
