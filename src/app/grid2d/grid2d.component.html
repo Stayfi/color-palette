@@ -1,10 +1,15 @@
-<input type="color" value="#ffffff" [(ngModel)]="topLeftColor" />
-{{ topLeftColor }}
-<input type="color" value="#000000" [(ngModel)]="bottomRightColor" />
-{{ bottomRightColor }}
+<div>
+  <span>Please choose corners color :</span>
+</div>
+<input type="color" style="margin:5px" [(ngModel)]="topLeftColor" />
+<input type="color" style="margin:5px" [(ngModel)]="topRightColor" />
+<br />
+<input type="color" style="margin:5px" [(ngModel)]="bottomLeftColor" />
+<input type="color" style="margin:5px" [(ngModel)]="bottomRightColor" />
 <br />
 <br />
-<input type="button" value="draw" (click)="drawGradientBackground()" />
+<br />
+<input type="button" value="Draw" (click)="drawGradientBackground()" />
 <br />
 <br />
 <table border="1" cellspacing="2">

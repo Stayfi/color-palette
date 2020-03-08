@@ -6,8 +6,10 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./grid2d.component.scss"]
 })
 export class Grid2dComponent implements OnInit {
-  topLeftColor = "#ffffff";
-  bottomRightColor = "#000000";
+  topLeftColor = "#FF9900";
+  topRightColor = "#000000";
+  bottomLeftColor = "#FFFFFF";
+  bottomRightColor = "#0099FF";
   defaultcolorGrid = "#CCCCCC";
 
   colorGridLen = 10;
@@ -17,8 +19,6 @@ export class Grid2dComponent implements OnInit {
 
   ngOnInit(): void {
     this.initColorsGrid();
-    this.setCellColor(0, this.colorGridLen - 1, "#000000");
-    this.setCellColor(this.colorGridLen - 1, 0, "#FFFFFF");
   }
 
   initColorsGrid() {
@@ -38,41 +38,68 @@ export class Grid2dComponent implements OnInit {
 
   drawGradientBackground() {
     this.setCellColor(0, 0, this.topLeftColor);
+    this.setCellColor(0, this.colorGridLen - 1, this.topRightColor);
+    this.setCellColor(this.colorGridLen - 1, 0, this.bottomLeftColor);
     this.setCellColor(
       this.colorGridLen - 1,
       this.colorGridLen - 1,
       this.bottomRightColor
     );
 
+    this.setGradientToCol(0);
+    this.setGradientToCol(this.colorGridLen - 1);
+
+    this.setGradientAllRow();
+  }
+
+  setGradientToCol(idCol) {
     const gradientStep = this.getGradientStepFromCells(
-      this.colorsGrid[0][0],
-      this.colorsGrid[0][this.colorGridLen - 1]
+      this.colorsGrid[0][idCol],
+      this.colorsGrid[this.colorGridLen - 1][idCol]
     );
-    for (let i = 1; i < this.colorGridLen; i++) {
-      // this.colorsGrid[0][i] = '#'+
-      //   this.intToHex(this.hexToInt(this.colorsGrid[0][i - 1]) + gradientStep.red)
-      //   this.intToHex(this.hexToInt(this.colorsGrid[0][i - 1]) + gradientStep.green)
-      //   this.intToHex(this.hexToInt(this.colorsGrid[0][i - 1]) + gradientStep.blue)
-      // );
+  for (let i = 1; i < this.colorGridLen - 1; i++) {
+      const prevRGBColor = this.getIntColorFromCSS(this.colorsGrid[i - 1][idCol]);
+      this.colorsGrid[i][idCol] = '#' +
+        this.intToHex(prevRGBColor.red + gradientStep.red) +
+        this.intToHex(prevRGBColor.green + gradientStep.green) +
+        this.intToHex(prevRGBColor.blue + gradientStep.blue)
+      ;
     }
+  }
+
+  setGradientAllRow() {
+    for(let i = 0; i < this.colorGridLen; i++) {
+      const gradientStep = this.getGradientStepFromCells(
+        this.colorsGrid[i][0],
+        this.colorsGrid[i][this.colorGridLen - 1]
+      );
+      for (let j = 1; j < this.colorGridLen - 1; j++) {
+          const prevRGBColor = this.getIntColorFromCSS(this.colorsGrid[i][j - 1]);
+          this.colorsGrid[i][j] = '#' +
+            this.intToHex(prevRGBColor.red + gradientStep.red) +
+            this.intToHex(prevRGBColor.green + gradientStep.green) +
+            this.intToHex(prevRGBColor.blue + gradientStep.blue)
+          ;
+        }
+     }
   }
 
   getGradientStepFromCells(cellStart: string, cellEnd: string) {
     const startColor = this.getIntColorFromCSS(cellStart);
     const endColor = this.getIntColorFromCSS(cellEnd);
     const gradientSteps = {
-      red: Math.abs(endColor.red - startColor.blue) / this.colorGridLen,
-      green: Math.abs(endColor.green - startColor.green) / this.colorGridLen,
-      blue: Math.abs(endColor.red - startColor.blue) / this.colorGridLen
+      red: (endColor.red - startColor.red) / this.colorGridLen,
+      green: (endColor.green - startColor.green) / this.colorGridLen,
+      blue: (endColor.blue - startColor.blue) / this.colorGridLen
     };
     return gradientSteps;
   }
 
   getIntColorFromCSS(cssColor: string) {
     const colorRGB = {
-      red: this.hexToInt(cssColor.substr("1", "2")),
-      green: this.hexToInt(cssColor.substr("3", "2")),
-      blue: this.hexToInt(cssColor.substr("5", "2"))
+      red: this.hexToInt(cssColor.substr(1, 2)),
+      green: this.hexToInt(cssColor.substr(3, 2)),
+      blue: this.hexToInt(cssColor.substr(5, 2))
     };
     return colorRGB;
   }
@@ -82,6 +109,7 @@ export class Grid2dComponent implements OnInit {
   }
 
   intToHex(intValue) {
-    return Number(intValue).toString(16);
+    const hexValue = ('0'+(Number(Math.round(intValue)).toString(16))).slice(-2).toUpperCase();
+    return hexValue;
   }
 }
